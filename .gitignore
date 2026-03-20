@@ -1,0 +1,36 @@
+# Environment files
+.env
+.env.*
+*.env
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS files
+.DS_Store
+*.swp
+
+# Node modules
+node_modules/
+frontend/node_modules/
+backend/node_modules/
+
+# Build files
+.next/
+dist/
+build/
+out/
+frontend/.next/
+frontend/out/
+
+# Markdown / docs
+*.md
+
+# Misc
+coverage/
+.vercel/
+
+# TypeScript
+*.tsbuildinfo
