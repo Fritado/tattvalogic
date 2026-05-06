@@ -18,6 +18,7 @@ import {
   Upload
 } from "lucide-react";
 import { API_BASE } from "@/config/apiConfig";
+import { Suspense } from "react";
 
 const tabs = [
   { id: 'personal', name: 'Personal Details', icon: User },
@@ -28,7 +29,7 @@ const tabs = [
   { id: 'documents', name: 'Documents', icon: FileText },
 ];
 
-export default function PublicOnboardingPage() {
+function PublicOnboardingPageContent() {
   const searchParams = useSearchParams();
   const token = searchParams.get("token");
   const router = useRouter();
@@ -1239,5 +1240,13 @@ export default function PublicOnboardingPage() {
       </div>
       </div>
     </div>
+  );
+}
+
+export default function PublicOnboardingPage() {
+  return (
+    <Suspense fallback={<div className="p-20 text-center"><Loader2 className="animate-spin inline text-zinc-400" size={40} /></div>}>
+      <PublicOnboardingPageContent />
+    </Suspense>
   );
 }

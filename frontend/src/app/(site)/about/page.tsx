@@ -19,6 +19,8 @@ export const metadata: Metadata = {
   }
 };
 
+export const dynamic = "force-dynamic";
+
 // Fetch team data from API
 async function getTeamData() {
   try {
