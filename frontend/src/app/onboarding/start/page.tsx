@@ -1238,7 +1238,6 @@ export default function PublicOnboardingPage() {
       </div>
       </div>
       </div>
-      </div>
     </div>
   );
 }
