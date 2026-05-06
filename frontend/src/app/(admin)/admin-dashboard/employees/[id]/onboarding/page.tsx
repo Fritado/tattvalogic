@@ -625,7 +625,7 @@ export default function OnboardingDetailPage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">Country</label>
-                        <select value={personalData.permanentAddress.country} onChange={e => setPersonalData({...personalData, permanentAddress: {...permanentAddress, country: e.target.value}})} className="w-full bg-white border border-zinc-100 rounded-2xl py-3 px-4 text-sm focus:ring-1 focus:ring-primary outline-none">
+                        <select value={personalData.permanentAddress.country} onChange={e => setPersonalData({...personalData, permanentAddress: {...personalData.permanentAddress, country: e.target.value}})} className="w-full bg-white border border-zinc-100 rounded-2xl py-3 px-4 text-sm focus:ring-1 focus:ring-primary outline-none">
                           <option value="India">India</option>
                           <option value="USA">USA</option>
                           <option value="UK">UK</option>
@@ -635,7 +635,7 @@ export default function OnboardingDetailPage() {
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400">PIN Code</label>
-                        <input type="text" maxLength={6} value={personalData.permanentAddress.pincode} onChange={e => setPersonalData({...personalData, permanentAddress: {...permanentAddress, pincode: e.target.value.replace(/\D/g, '')}})} className="w-full bg-white border border-zinc-100 rounded-2xl py-3 px-4 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="6-digit PIN" />
+                        <input type="text" maxLength={6} value={personalData.permanentAddress.pincode} onChange={e => setPersonalData({...personalData, permanentAddress: {...personalData.permanentAddress, pincode: e.target.value.replace(/\D/g, '')}})} className="w-full bg-white border border-zinc-100 rounded-2xl py-3 px-4 text-sm focus:ring-1 focus:ring-primary outline-none" placeholder="6-digit PIN" />
                       </div>
                     </div>
                   )}
