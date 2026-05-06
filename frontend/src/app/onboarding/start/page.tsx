@@ -361,6 +361,7 @@ export default function PublicOnboardingPage() {
     finally { setPhotoUploading(false); }
   };
 
+  const calculateTotalExperience = () => {
     let totalMonths = 0;
     workExperiences.forEach(exp => {
       if (!exp.startDate) return;
@@ -1234,6 +1235,7 @@ export default function PublicOnboardingPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
       </div>
       </div>
