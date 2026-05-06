@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { API_BASE } from "@/config/apiConfig";
 import { 
   Building, 
@@ -21,6 +22,7 @@ import Link from "next/link";
 
 export default function LeadDetail({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [noteText, setNoteText] = useState("");
