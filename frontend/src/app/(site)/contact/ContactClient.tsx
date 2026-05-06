@@ -212,9 +212,9 @@ export default function ContactPage() {
                             { 
                                 icon: Mail, 
                                 title: "Email Support", 
-                                content: "hello@tattvalogic.com", 
+                                content: "support@tattvalogic.com", 
                                 sub: "Typical response < 2 hours",
-                                action: { label: "Email Us", href: "mailto:hello@tattvalogic.com" }
+                                action: { label: "Email Us", href: "mailto:support@tattvalogic.com" }
                             }
                         ].map((item, i) => (
                             <div key={i} className="flex flex-col p-8 rounded-3xl bg-white border border-slate-100 hover:border-primary/20 transition-all duration-300 group relative overflow-hidden">

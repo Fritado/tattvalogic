@@ -4,11 +4,12 @@
   "description": "Next.js Frontend UI",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 3200",
+    "dev": "next dev -p 3005",
     "build": "next build",
-    "start": "next start -p 3200"
+    "start": "next start -p 3005"
   },
   "dependencies": {
+    "@next/third-parties": "^16.2.4",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/postcss": "^4",
     "@tailwindcss/typography": "^0.5.19",
@@ -29,6 +30,8 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.35.2",
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.7",
     "lowlight": "^3.3.0",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
@@ -48,10 +51,11 @@
     "typescript": "^5"
   },
   "browserslist": [
-    "last 2 versions",
+    "last 2 Chrome versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "last 2 Firefox versions",
     "not dead",
-    "> 0.2%",
-    "not safari < 15.4",
-    "not ios_saf < 15.4"
+    "not IE 11"
   ]
 }

@@ -1,85 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExternalLink, Briefcase, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import FloatingOrbs from "@/components/shared/FloatingOrbs";
-
-const portfolioItems = [
-  {
-    id: "critical-buzzer",
-    name: "Critical Buzzer",
-    url: "https://criticalbuzzer.com/",
-    description: "AI-powered critical alert and emergency notification platform.",
-    logo: null,
-    category: "AI & SaaS"
-  },
-  {
-    id: "fritado",
-    name: "Fritado",
-    url: "https://fritado.com/",
-    description: "AI-driven SaaS platform for automated marketing, lead generation, and growth intelligence.",
-    logo: "/images/portfolio/Fritado.png",
-    category: "AI & Growth"
-  },
-  {
-    id: "nutalz",
-    name: "Nutalz",
-    url: "https://nutalz.com/",
-    description: "Digital platform focused on health, wellness, and nutrition solutions.",
-    logo: "/images/portfolio/Nutalz.png",
-    category: "HealthTech"
-  },
-  {
-    id: "lexes",
-    name: "Lexes",
-    url: "http://lexes.co.in/",
-    description: "Legal and compliance technology platform providing digital legal solutions.",
-    logo: "/images/portfolio/Lexes-Technologies-logo.jpg",
-    category: "LegalTech"
-  },
-  {
-    id: "tapglobal360",
-    name: "TapGlobal360",
-    url: "https://tapglobal360.com/",
-    description: "Global networking and digital transformation platform for businesses.",
-    logo: "/images/portfolio/tapglobal360.webp",
-    category: "Enterprise"
-  },
-  {
-    id: "vidyabharati",
-    name: "Vidya Bharati USA",
-    url: "https://vidyabharatiusa.org/",
-    description: "Educational and cultural integration platform fostering holistic development.",
-    logo: "/images/portfolio/Vidyabhartiusa.webp",
-    category: "EdTech"
-  },
-  {
-    id: "duc-bank",
-    name: "DUC Bank",
-    url: "https://duc.bank.in/",
-    description: "Digital cooperative banking platform offering modern financial services.",
-    logo: "/images/portfolio/DUCBank.png",
-    category: "FinTech"
-  },
-  {
-    id: "apnapandit",
-    name: "ApnaPandit",
-    url: "https://apnapandit.com/",
-    description: "Online platform connecting users with pandits for religious ceremonies and rituals.",
-    logo: "/images/portfolio/apnapandit.png",
-    category: "Consumer"
-  },
-  {
-    id: "algroflix",
-    name: "Algroflix",
-    url: "https://algroflix.com/",
-    description: "Digital media and entertainment platform.",
-    logo: "/images/portfolio/Algroflix.jpg",
-    category: "Media & Ent"
-  }
-];
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 30 },
@@ -92,7 +17,24 @@ const staggerContainer = {
 };
 
 export default function PortfolioClient() {
+  const [portfolioItems, setPortfolioItems] = useState<any[]>([]);
   const [visibleItems, setVisibleItems] = useState(12);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPortfolio = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/portfolio`);
+        const data = await res.json();
+        setPortfolioItems(data || []);
+      } catch (err) {
+        console.error("Failed to fetch portfolio:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchPortfolio();
+  }, []);
 
   const loadMore = () => {
     setVisibleItems((prev: number) => prev + 4);
@@ -100,6 +42,38 @@ export default function PortfolioClient() {
 
   const currentItems = portfolioItems.slice(0, visibleItems);
   const hasMore = visibleItems < portfolioItems.length;
+
+  if (loading) {
+    return (
+      <div className="flex flex-col min-h-screen bg-white">
+        <section className="subpage-header animate-pulse">
+            <div className="container mx-auto px-4 h-64 flex flex-col justify-center items-center">
+                <div className="h-4 w-32 bg-white/20 rounded-full mb-6" />
+                <div className="h-12 w-64 bg-white/20 rounded-xl mb-4" />
+                <div className="h-6 w-96 bg-white/20 rounded-lg" />
+            </div>
+        </section>
+        <section className="section-padding">
+          <div className="container mx-auto px-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-[400px] rounded-[2rem] bg-slate-50 border border-slate-100 animate-pulse overflow-hidden">
+                    <div className="h-24 bg-slate-100" />
+                    <div className="p-8">
+                        <div className="w-20 h-20 bg-slate-200 rounded-2xl -mt-16 mb-6" />
+                        <div className="h-8 w-3/4 bg-slate-200 rounded-lg mb-4" />
+                        <div className="h-4 w-full bg-slate-100 rounded-md mb-2" />
+                        <div className="h-4 w-full bg-slate-100 rounded-md mb-2" />
+                        <div className="h-4 w-2/3 bg-slate-100 rounded-md" />
+                    </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -140,51 +114,78 @@ export default function PortfolioClient() {
             initial="hidden" animate="visible" variants={staggerContainer}
           >
             {currentItems.map((project, idx) => {
-              const fallbackLogo = `https://ui-avatars.com/api/?name=${project.name}&background=e2e8f0&color=475569&bold=true`;
-              const logoUrl = project.logo || fallbackLogo;
+              const fallbackLogo = `https://ui-avatars.com/api/?name=${project.title}&background=e2e8f0&color=475569&bold=true`;
+              const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '');
+              const logoUrl = project.thumbnail ? (project.thumbnail.startsWith('http') ? project.thumbnail : `${baseUrl}${project.thumbnail}`) : fallbackLogo;
+
+              // Dynamic color scheme based on category
+              const getCategoryStyle = (cat: string) => {
+                const c = cat.toLowerCase();
+                if (c.includes('web')) return { from: 'from-blue-600/10', to: 'to-indigo-600/10', text: 'text-blue-600', border: 'border-blue-100', dot: 'bg-blue-600' };
+                if (c.includes('app') || c.includes('mobile')) return { from: 'from-purple-600/10', to: 'to-fuchsia-600/10', text: 'text-purple-600', border: 'border-purple-100', dot: 'bg-purple-600' };
+                if (c.includes('ai') || c.includes('data')) return { from: 'from-emerald-600/10', to: 'to-teal-600/10', text: 'text-emerald-600', border: 'border-emerald-100', dot: 'bg-emerald-600' };
+                return { from: 'from-orange-600/10', to: 'to-red-600/10', text: 'text-primary', border: 'border-primary/10', dot: 'bg-primary' };
+              };
+
+              const style = getCategoryStyle(project.category || 'other');
 
               return (
-                <motion.div key={project.id} variants={fadeInUp}>
-                  <div className="p-8 md:p-10 rounded-[2.5rem] bg-white border border-slate-100 hover:border-primary/30 transition-all duration-500 hover:shadow-[0_40px_80px_-20px_rgba(0,0,0,0.08)] flex flex-col group h-full relative overflow-hidden">
-                    {/* Hover Glow Effect - Subtle for Light Theme */}
-                    <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/5 rounded-full blur-[60px] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    
-                    <div className="flex justify-between items-start mb-8 relative z-10">
-                      <div className="w-20 h-20 bg-white rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex items-center justify-center p-3 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
-                        <img 
-                          src={logoUrl} 
-                          alt={`${project.name} Logo`}
-                          className="w-full h-full object-contain"
-                          onError={(e) => {
-                              (e.target as HTMLImageElement).src = fallbackLogo;
-                          }}
-                          loading="lazy"
-                        />
+                <motion.div key={project._id} variants={fadeInUp}>
+                  <div className="group h-full flex flex-col bg-white rounded-[2rem] border border-slate-100 hover:border-primary/30 transition-all duration-500 hover:shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] relative overflow-hidden">
+                    {/* Top Decorative Header */}
+                    <div className={`h-24 bg-gradient-to-br ${style.from} ${style.to} relative overflow-hidden`}>
+                      <div className="absolute inset-0 hero-grid opacity-10" />
+                      <div className={`absolute top-4 right-6 px-3 py-1 rounded-full bg-white/80 backdrop-blur-sm border ${style.border} flex items-center gap-2`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+                        <span className={`text-[10px] font-black uppercase tracking-widest ${style.text}`}>
+                          {project.category}
+                        </span>
                       </div>
-                      <span className="px-4 py-1.5 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-black uppercase tracking-widest text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
-                        {project.category}
-                      </span>
                     </div>
-                    
-                    <div className="space-y-4 mb-8 flex-grow relative z-10">
-                      <h3 className="text-2xl font-bold text-slate-900 group-hover:text-primary transition-colors">
-                        {project.name}
+
+                    {/* Content Body */}
+                    <div className="p-8 pt-0 flex-grow relative flex flex-col">
+                      {/* Logo Offset */}
+                      <div className="relative -mt-10 mb-6 flex justify-between items-end">
+                        <div className="w-20 h-20 bg-white rounded-2xl shadow-[0_12px_24px_rgba(0,0,0,0.08)] border border-slate-50 flex items-center justify-center p-3 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500">
+                          <img 
+                            src={logoUrl} 
+                            alt={`${project.title} Logo`}
+                            className="w-full h-full object-contain"
+                            onError={(e) => {
+                                (e.target as HTMLImageElement).src = fallbackLogo;
+                            }}
+                            loading="lazy"
+                          />
+                        </div>
+                        
+                        <div className="mb-2 opacity-0 group-hover:opacity-100 transition-opacity translate-x-2 group-hover:translate-x-0 duration-500">
+                          <ExternalLink className="w-5 h-5 text-primary" />
+                        </div>
+                      </div>
+
+                      <h3 className="text-2xl font-bold text-slate-900 mb-4 group-hover:text-primary transition-colors">
+                        {project.title}
                       </h3>
-                      <p className="text-slate-600 font-sans leading-relaxed text-lg group-hover:text-slate-700 transition-colors">
+                      <p className="text-slate-600 font-sans leading-relaxed text-base mb-8 flex-grow">
                         {project.description}
                       </p>
-                    </div>
-                    
-                    <div className="pt-6 border-t border-slate-100 relative z-10">
-                      <a 
-                        href={project.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-primary transition-all duration-300 group/link"
-                      >
-                        Launch Project
-                        <ArrowRight className="w-4 h-4 group-hover/link:translate-x-2 transition-transform" />
-                      </a>
+
+                      <div className="pt-6 border-t border-slate-50 mt-auto">
+                        <a 
+                          href={project.projectUrl} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="flex items-center justify-between group/link w-full"
+                        >
+                          <span className="text-sm font-bold text-slate-400 group-hover/link:text-primary transition-colors">
+                            Launch Project
+                          </span>
+                          <div className="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center group-hover/link:bg-primary group-hover/link:text-white transition-all duration-300">
+                            <ArrowRight className="w-4 h-4 group-hover/link:translate-x-0.5 transition-transform" />
+                          </div>
+                        </a>
+                      </div>
                     </div>
                   </div>
                 </motion.div>

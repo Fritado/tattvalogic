@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @theme {
   --font-sans: var(--font-inter);
@@ -148,8 +149,9 @@
 .hero-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(80px);
+  filter: blur(60px);
   animation: float-slow 8s ease-in-out infinite;
+  will-change: transform;
   pointer-events: none;
   z-index: 0;
 }

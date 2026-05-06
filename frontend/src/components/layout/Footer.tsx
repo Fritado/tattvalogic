@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Facebook, Linkedin, Instagram } from "lucide-react";
 
 export default function Footer() {
     return (
@@ -14,8 +14,10 @@ export default function Footer() {
                             <Image
                                 src="/TattvaLogic.png"
                                 alt="TattvaLogic"
-                                fill
-                                className="object-contain object-left"
+                                width={224}
+                                height={64}
+                                className="object-contain object-left w-full h-full"
+                                quality={60}
                             />
                         </div>
                         <p className="text-sm text-gray-300 mt-4 leading-relaxed">
@@ -25,13 +27,11 @@ export default function Footer() {
                             <a aria-label="Visit TattvaLogic LinkedIn" href="https://www.linkedin.com/company/tattvalogic/about/?viewAsMember=true" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-primary transition-colors">
                                 <Linkedin className="w-5 h-5" />
                             </a>
-                            <a aria-label="Visit TattvaLogic Twitter" href="#" className="text-gray-300 hover:text-primary transition-colors">
-                                <Twitter className="w-5 h-5" />
-                            </a>
+
                             <a aria-label="Visit TattvaLogic Facebook" href="https://www.facebook.com/tattvalogic" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-primary transition-colors">
                                 <Facebook className="w-5 h-5" />
                             </a>
-                            <a aria-label="Visit TattvaLogic Instagram" href="#" className="text-gray-300 hover:text-primary transition-colors">
+                            <a aria-label="Visit TattvaLogic Instagram" href="https://www.instagram.com/tattvalogic/" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-primary transition-colors">
                                 <Instagram className="w-5 h-5" />
                             </a>
                         </div>

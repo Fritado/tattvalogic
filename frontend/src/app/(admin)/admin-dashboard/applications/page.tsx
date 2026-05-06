@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Search, User, Mail, FileText, ChevronRight, CheckCircle, XCircle, Clock, X, Phone } from "lucide-react";
+import { Search, User, Mail, FileText, ChevronRight, CheckCircle, XCircle, Clock, X, Phone, Trash2 } from "lucide-react";
 
 import { API_BASE } from "@/config/apiConfig";
 
@@ -10,25 +10,56 @@ export default function ApplicationsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedApp, setSelectedApp] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [newNote, setNewNote] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const limit = 10;
+
+  // Debounce Search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+      setCurrentPage(1); // Reset to page 1 on search
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   useEffect(() => {
     fetchApplications();
-  }, []);
+  }, [currentPage, statusFilter, debouncedSearch]);
 
   const fetchApplications = async () => {
+    setLoading(true);
     try {
       const token = localStorage.getItem("admin_token");
-      const res = await fetch(`${API_BASE}/careers/applications`, {
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        limit: limit.toString(),
+        status: statusFilter,
+        search: debouncedSearch
+      });
+
+      const res = await fetch(`${API_BASE}/careers/applications?${queryParams}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       const data = await res.json();
-      if (Array.isArray(data)) {
-        setApplications(data);
+      
+      if (data.applications) {
+        setApplications(data.applications);
+        setTotalPages(data.pages);
+        setTotalItems(data.total);
       } else {
         setApplications([]);
+        setTotalPages(1);
+        setTotalItems(0);
       }
     } catch (err) {
       console.error(err);
@@ -57,6 +88,31 @@ export default function ApplicationsPage() {
       }
     } catch (err) {
       console.error(err);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this application? This action cannot be undone.")) return;
+    
+    setIsDeleting(true);
+    const token = localStorage.getItem("admin_token");
+    try {
+      const res = await fetch(`${API_BASE}/careers/applications/${id}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (res.ok) {
+        setSelectedApp(null);
+        fetchApplications();
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message || "Failed to delete application.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("An error occurred while deleting the application.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -124,16 +180,10 @@ export default function ApplicationsPage() {
     }
   };
 
-  const filteredApps = applications.filter(app => {
-    const matchesSearch = 
-      app.applicantName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.applicantEmail.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (app.careerId?.jobTitle || "").toLowerCase().includes(searchQuery.toLowerCase());
-    
-    const matchesStatus = statusFilter === "All" || app.status === statusFilter;
-    
-    return matchesSearch && matchesStatus;
-  });
+  const handleStatusChange = (status: string) => {
+    setStatusFilter(status);
+    setCurrentPage(1); // Reset to page 1 on status change
+  };
 
   const statuses = ["Applied", "Screening", "Interview Scheduled", "Shortlisted", "Selected", "Rejected"];
 
@@ -154,7 +204,7 @@ export default function ApplicationsPage() {
           {["All", ...statuses].map((status) => (
             <button
               key={status}
-              onClick={() => setStatusFilter(status)}
+              onClick={() => handleStatusChange(status)}
               className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                 statusFilter === status 
                   ? "bg-zinc-900 text-white shadow-md shadow-zinc-200" 
@@ -182,9 +232,9 @@ export default function ApplicationsPage() {
           <tbody className="divide-y divide-zinc-100">
             {loading ? (
               <tr><td colSpan={6} className="p-20 text-center text-zinc-400">Loading candidate pipeline...</td></tr>
-            ) : filteredApps.length === 0 ? (
+            ) : applications.length === 0 ? (
               <tr><td colSpan={6} className="p-20 text-center text-zinc-400 font-sans">No candidates found matching the criteria.</td></tr>
-            ) : filteredApps.map((app) => (
+            ) : applications.map((app) => (
               <tr 
                 key={app._id} 
                 className="hover:bg-zinc-50/50 transition-colors group cursor-pointer"
@@ -231,6 +281,56 @@ export default function ApplicationsPage() {
             ))}
           </tbody>
         </table>
+
+        {/* Pagination */}
+        <div className="px-6 py-5 bg-zinc-50/50 border-t border-zinc-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+            Showing <span className="text-zinc-900">{applications.length}</span> of <span className="text-zinc-900">{totalItems}</span> Candidates
+          </p>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1 || loading}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-200 bg-white text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronRight size={14} className="rotate-180" /> Prev
+            </button>
+            
+            <div className="flex items-center gap-1.5 mx-2">
+              {[...Array(totalPages)].map((_, i) => {
+                // Simple logic to show only few pages if totalPages is large
+                if (totalPages > 5) {
+                  if (i + 1 !== 1 && i + 1 !== totalPages && Math.abs(currentPage - (i + 1)) > 1) {
+                    if (Math.abs(currentPage - (i + 1)) === 2) return <span key={i} className="text-zinc-400">...</span>;
+                    return null;
+                  }
+                }
+                
+                return (
+                  <button
+                    key={i}
+                    onClick={() => setCurrentPage(i + 1)}
+                    className={`w-8 h-8 rounded-xl text-[10px] font-black transition-all ${
+                      currentPage === i + 1 
+                        ? "bg-zinc-900 text-white shadow-lg shadow-zinc-200" 
+                        : "bg-white border border-zinc-200 text-zinc-400 hover:text-zinc-600 hover:border-zinc-300"
+                    }`}
+                  >
+                    {i + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button 
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages || loading}
+              className="flex items-center gap-1 px-3 py-2 rounded-xl border border-zinc-200 bg-white text-[10px] font-black uppercase tracking-widest text-zinc-600 hover:bg-zinc-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            >
+              Next <ChevronRight size={14} />
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Details Modal */}
@@ -373,8 +473,12 @@ export default function ApplicationsPage() {
                 </div>
 
                 <div className="pt-8 border-t border-zinc-200/50">
-                   <button className="w-full py-4 text-xs font-black uppercase tracking-widest text-red-400 hover:bg-red-50 rounded-2xl transition-colors border border-transparent hover:border-red-100">
-                      Archive Application
+                   <button 
+                    onClick={() => handleDelete(selectedApp._id)}
+                    disabled={isDeleting}
+                    className="w-full py-4 text-xs font-black uppercase tracking-widest text-red-400 hover:bg-red-50 rounded-2xl transition-colors border border-transparent hover:border-red-100 flex items-center justify-center gap-2"
+                   >
+                      <Trash2 size={14} /> {isDeleting ? "Deleting..." : "Delete Application"}
                    </button>
                 </div>
               </div>

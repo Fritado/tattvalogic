@@ -23,6 +23,11 @@ const enquirySchema = new mongoose.Schema({
         type: String,
         enum: ['new', 'responded', 'deleted'],
         default: 'new'
+    },
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
     }
 }, { timestamps: true });
 

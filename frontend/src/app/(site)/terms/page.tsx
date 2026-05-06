@@ -69,10 +69,10 @@ export default function TermsOfServicePage() {
                                 For full legal inquiries or partner agreements, please contact:
                             </p>
                             <a
-                                href="mailto:legal@tattvalogic.com"
+                                href="mailto:support@tattvalogic.com"
                                 className="text-xl font-bold text-primary hover:text-primary/80 transition-colors"
                             >
-                                legal@tattvalogic.com
+                                support@tattvalogic.com
                             </a>
                         </div>
                     </div>

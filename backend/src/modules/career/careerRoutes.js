@@ -10,7 +10,8 @@ const {
     getApplicationById,
     updateApplicationStatus,
     addApplicationNote,
-    submitApplication
+    submitApplication,
+    deleteApplication
 } = require('./careerController');
 const { protect } = require('../../middleware/auth');
 
@@ -27,6 +28,7 @@ router.get('/applications', protect, getApplications);
 router.get('/applications/:id', protect, getApplicationById);
 router.put('/applications/:id/status', protect, updateApplicationStatus);
 router.post('/applications/:id/notes', protect, addApplicationNote);
+router.delete('/applications/:id', protect, deleteApplication);
 router.post('/apply', upload.single('resume'), submitApplication);
 
 module.exports = router;

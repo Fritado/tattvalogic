@@ -1,3 +1,4 @@
+import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import Script from "next/script";
@@ -58,15 +59,17 @@ export default function RootLayout({
         className={`${inter.variable} ${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-BZ2Z92FE9R" strategy="afterInteractive" />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-BZ2Z92FE9R');
-          `}
-        </Script>
+        <GoogleAnalytics gaId="G-BZ2Z92FE9R" />
+        <Script
+          src="https://api.fritado.com/chatpilot.js"
+          data-user-id="c3e51363b2c210c9d320a93898c1c789"
+          strategy="lazyOnload"
+        />
+        <Script
+          src="https://api.fritado.com/fritado-capture.js"
+          data-key="a7967832b68ec33b46efe6cc29b38291"
+          strategy="lazyOnload"
+        />
         {children}
       </body>
     </html>

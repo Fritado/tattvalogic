@@ -1,16 +1,39 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { motion, useInView, useMotionValue, useSpring, animate } from "framer-motion";
 import {
   ArrowRight, Code2, BrainCircuit, Users, ShieldCheck,
   CheckCircle2, Sparkles, Zap, Globe2, TrendingUp,
-  Star, Quote, ChevronRight, Play
+  Star, Quote, ChevronLeft, ChevronRight, Play
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import HeroCarousel from "@/components/shared/HeroCarousel";
 import FloatingOrbs from "@/components/shared/FloatingOrbs";
+import Image from "next/image";
+
+// Dynamic imports for heavy sections to reduce main-thread work
+const ServicesSection = dynamic(() => import("@/components/home/ServicesSection"), { 
+  ssr: true,
+  loading: () => <div className="py-28 bg-muted/10 animate-pulse h-[600px]" />
+});
+
+const ProductsSection = dynamic(() => import("@/components/home/ProductsSection"), { 
+  ssr: true,
+  loading: () => <div className="py-28 bg-background animate-pulse h-[800px]" />
+});
+
+const TestimonialsSection = dynamic(() => import("@/components/home/TestimonialsSection"), { 
+  ssr: false, // Client-heavy carousel, defer to client
+  loading: () => <div className="py-28 bg-muted/10 animate-pulse h-[500px]" />
+});
+
+const GrowthShowcase = dynamic(() => import("@/components/home/GrowthShowcase"), { 
+  ssr: true,
+  loading: () => <div className="py-28 bg-white animate-pulse h-[700px]" />
+});
 
 
 /* ─────────────────────────────────────────────── */
@@ -209,6 +232,8 @@ const blogPosts = [
 export default function Home() {
   const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [latestBlogs, setLatestBlogs] = useState<any[]>(blogPosts);
+  const [dynamicTestimonials, setDynamicTestimonials] = useState<any[]>([]);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const fetchLatestBlogs = async () => {
@@ -234,15 +259,38 @@ export default function Home() {
         console.error("Failed to load latest blogs", err);
       }
     };
+
+    const fetchTestimonials = async () => {
+      try {
+        const { API_BASE } = await import("@/config/apiConfig");
+        const res = await fetch(`${API_BASE}/testimonials`);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && data.length > 0) {
+            setDynamicTestimonials(data);
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load testimonials", err);
+      }
+    };
+
     fetchLatestBlogs();
+    fetchTestimonials();
   }, []);
 
+  const combinedTestimonials = dynamicTestimonials.length > 0 ? dynamicTestimonials : testimonials;
+
   useEffect(() => {
+    if (combinedTestimonials.length <= 3 || isPaused) return;
     const t = setInterval(() => {
-      setActiveTestimonial((p) => (p + 1) % testimonials.length);
-    }, 5000);
+      setActiveTestimonial((p) => (p + 1) % combinedTestimonials.length);
+    }, 4000);
     return () => clearInterval(t);
-  }, []);
+  }, [combinedTestimonials, isPaused]);
+
+  const nextTestimonial = () => setActiveTestimonial((p) => (p + 1) % combinedTestimonials.length);
+  const prevTestimonial = () => setActiveTestimonial((p) => (p - 1 + combinedTestimonials.length) % combinedTestimonials.length);
 
   return (
     <div className="flex flex-col w-full overflow-hidden">
@@ -292,185 +340,14 @@ export default function Home() {
       {/* ══════════════════════════════════════════ */}
       {/* SECTION 3 — OUR EXPERTISE                */}
       {/* ══════════════════════════════════════════ */}
-      <section id="capabilities" className="py-28 bg-muted/20">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center max-w-3xl mx-auto mb-20"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={fadeUp}
-          >
-            <span className="section-badge">Our Services</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6">
-              Comprehensive Technology
-              <span className="hero-gradient-text"> Expertise</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              End-to-end technology services designed to modernize, scale, and future-proof your business.
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={stagger}
-          >
-            {services.map((svc, i) => (
-              <motion.div key={i} variants={fadeUp} custom={i * 0.1}>
-                <Link href={svc.link} className="service-card group block h-full">
-                  <div className={`absolute inset-0 bg-gradient-to-br ${svc.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`} />
-                  <div className="relative z-10 flex flex-col h-full p-7">
-                    <div className={`service-icon-wrap ${svc.iconBg} mb-5`}>
-                      <svc.icon className={`w-6 h-6 ${svc.iconColor}`} />
-                    </div>
-                    <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
-                      {svc.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed flex-grow">
-                      {svc.desc}
-                    </p>
-                    <div className="flex items-center gap-2 mt-6 text-sm font-semibold text-primary">
-                      Learn more
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <div className="mt-12 text-center">
-            <Link href="/services" className="inline-flex items-center gap-2 px-8 py-3 rounded-full border border-border hover:border-primary/50 hover:text-primary transition-all text-sm font-semibold group">
-              View All Services
-              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-            </Link>
-          </div>
-        </div>
-      </section>
+      <ServicesSection services={services} fadeUp={fadeUp} stagger={stagger} />
 
       {/* ══════════════════════════════════════════ */}
       {/* SECTION 4 — PRODUCTS                     */}
       {/* ══════════════════════════════════════════ */}
-      <section className="py-28 bg-background relative overflow-hidden">
-        <div className="absolute inset-0 products-bg pointer-events-none" />
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-          <motion.div
-            className="text-center max-w-3xl mx-auto mb-20"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <span className="section-badge">Our Products</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-6">
-              Proprietary SaaS
-              <span className="hero-gradient-text"> Platforms</span>
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Battle-tested products accelerating businesses worldwide.
-            </p>
-          </motion.div>
+      <ProductsSection fadeUp={fadeUp} />
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-            {/* Fritado */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-              className="product-card product-fritado group"
-            >
-              <div className="product-glow product-glow-blue" />
-              <div className="relative z-10 flex flex-col h-full p-10 lg:p-12">
-                <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <span className="inline-block py-1 px-3 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-bold tracking-widest uppercase mb-4">
-                      Marketing Platform
-                    </span>
-                    <h3 className="text-5xl font-bold text-foreground">Fritado</h3>
-                  </div>
-                  <div className="product-badge bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400">
-                    SaaS
-                  </div>
-                </div>
-
-                <p className="text-lg text-muted-foreground mb-8 flex-grow leading-relaxed">
-                  AI-powered marketing automation platform — generate qualified leads,
-                  optimize campaigns with machine learning, and scale digital growth effortlessly.
-                </p>
-
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  {["Lead Gen", "AI Content", "Analytics"].map((f, i) => (
-                    <div key={i} className="product-feature-chip bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-                      {f}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/products/fritado" className="product-btn-primary bg-blue-600 hover:bg-blue-700">
-                    Explore Fritado
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <a href="https://fritado.com" target="_blank" rel="noopener noreferrer" className="product-btn-secondary">
-                    Visit Website
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Critical Buzzer */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, ease: [0.25, 0.4, 0.25, 1] }}
-              className="product-card product-buzzer group"
-            >
-              <div className="product-glow product-glow-red" />
-              <div className="relative z-10 flex flex-col h-full p-10 lg:p-12">
-                <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <span className="inline-block py-1 px-3 rounded-full bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 text-xs font-bold tracking-widest uppercase mb-4">
-                      Operations Platform
-                    </span>
-                    <h3 className="text-4xl font-bold text-foreground leading-tight whitespace-nowrap">Critical Buzzer</h3>
-                  </div>
-                  <div className="product-badge bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400">
-                    SaaS
-                  </div>
-                </div>
-
-                <p className="text-lg text-muted-foreground mb-8 flex-grow leading-relaxed">
-                  Smart alerting and incident management for mission-critical operations.
-                  Detect anomalies instantly, auto-escalate, and resolve before customers notice.
-                </p>
-
-                <div className="grid grid-cols-3 gap-4 mb-8">
-                  {["Alerting", "Monitoring", "Incident Mgmt"].map((f, i) => (
-                    <div key={i} className="product-feature-chip bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300">
-                      {f}
-                    </div>
-                  ))}
-                </div>
-
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Link href="/products/critical-buzzer" className="product-btn-primary bg-red-600 hover:bg-red-700 whitespace-nowrap">
-                    Explore Critical Buzzer
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                  <a href="https://criticalbuzzer.com" target="_blank" rel="noopener noreferrer" className="product-btn-secondary">
-                    Visit Website
-                  </a>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+      <GrowthShowcase />
 
       {/* ══════════════════════════════════════════ */}
       {/* SECTION 5 — WHY CHOOSE US                */}
@@ -610,77 +487,15 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════ */}
-      {/* SECTION 7 — TESTIMONIALS                 */}
-      {/* ══════════════════════════════════════════ */}
-      <section className="py-28 bg-muted/20 overflow-hidden">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="text-center max-w-3xl mx-auto mb-16"
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            variants={fadeUp}
-          >
-            <span className="section-badge">Testimonials</span>
-            <h2 className="text-4xl md:text-5xl font-bold mt-4 mb-4">
-              What Our <span className="hero-gradient-text">Clients Say</span>
-            </h2>
-          </motion.div>
-
-          {/* Testimonial Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto">
-            {testimonials.map((t, i) => (
-              <motion.div
-                key={i}
-                className={`testimonial-card ${activeTestimonial === i ? "testimonial-card-active" : ""}`}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                onClick={() => setActiveTestimonial(i)}
-              >
-                <Quote className="w-8 h-8 text-primary/30 mb-4" />
-                <div className="flex mb-4">
-                  {Array.from({ length: t.rating }).map((_, s) => (
-                    <Star key={s} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-foreground leading-relaxed mb-6 flex-grow font-medium">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-3 mt-auto">
-                  <div className={`testimonial-avatar bg-gradient-to-br ${t.color}`}>
-                    {t.avatar}
-                  </div>
-                  <div>
-                    <p className="font-bold text-foreground text-sm">{t.name}</p>
-                    <p className="text-muted-foreground text-xs">{t.title}</p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Dot nav */}
-          <div className="flex justify-center gap-4 mt-8">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                aria-label={`View testimonial ${i + 1}`}
-                onClick={() => setActiveTestimonial(i)}
-                className="p-3 -m-3 flex items-center justify-center focus:outline-none"
-              >
-                <div
-                  className={`h-2 rounded-full transition-all duration-300 ${
-                    activeTestimonial === i ? "w-8 bg-primary" : "w-2 bg-border"
-                  }`}
-                />
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TestimonialsSection 
+        combinedTestimonials={combinedTestimonials}
+        activeTestimonial={activeTestimonial}
+        setActiveTestimonial={setActiveTestimonial}
+        prevTestimonial={prevTestimonial}
+        nextTestimonial={nextTestimonial}
+        setIsPaused={setIsPaused}
+        fadeUp={fadeUp}
+      />
 
       {/* ══════════════════════════════════════════ */}
       {/* SECTION 8 — BLOG INSIGHTS                */}
@@ -718,9 +533,12 @@ export default function Home() {
                     className={`blog-card-image bg-gradient-to-br ${post.gradient} relative overflow-hidden`}
                   >
                     {post.featuredImage && (
-                      <div 
-                        className="absolute inset-0 bg-cover bg-center transition-transform duration-700 group-hover:scale-105"
-                        style={{ backgroundImage: `url(${post.featuredImage})` }}
+                      <Image 
+                        src={post.featuredImage}
+                        alt={post.title}
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
                       />
                     )}
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />

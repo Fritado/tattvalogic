@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ArrowRight, User, Calendar, Share2, Facebook, Twitter, Linkedin, MessageSquare, ChevronRight } from "lucide-react";
 import FloatingOrbs from "@/components/shared/FloatingOrbs";
@@ -58,7 +59,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans">
+        <div className="flex flex-col min-h-screen bg-background text-foreground selection:bg-primary/30 font-sans antialiased">
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -93,7 +94,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                                 <span className="text-white/40 text-[10px] font-black uppercase tracking-widest leading-[0.1em]">8 Min Read</span>
                             </div>
  
-                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black mb-12 tracking-tighter leading-[0.9] text-white">
+                            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold font-heading mb-12 tracking-tight leading-[1.1] text-white">
                                 {post.title}
                             </h1>
  
@@ -136,13 +137,13 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                     transition={{ duration: 1, delay: 0.2 }}
                     className="aspect-[21/9] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] border border-white/10 bg-slate-100"
                 >
-                    <img 
+                    <Image 
                         src={post.featuredImage || "/placeholder-blog.jpg"} 
                         alt={post.title} 
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                            (e.target as HTMLImageElement).src = "/placeholder-blog.jpg";
-                        }}
+                        fill
+                        priority
+                        className="object-cover"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
                     />
                 </motion.div>
             </section>
@@ -154,7 +155,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                     <aside className="lg:w-72 hidden lg:block sticky top-32 h-fit">
                         <div className="space-y-8">
                              <div>
-                                <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-primary mb-6">In this article</h4>
+                                <h4 className="text-[10px] font-bold font-heading uppercase tracking-[0.3em] text-primary mb-6">In this article</h4>
                                 <nav className="space-y-4">
                                     {toc.map((item) => (
                                         <a 
@@ -169,7 +170,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                              </div>
                              <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100">
                                 <MessageSquare className="text-primary mb-4" />
-                                <h5 className="font-bold text-lg mb-2 text-slate-900">Have a question?</h5>
+                                <h5 className="font-bold font-heading text-lg mb-2 text-slate-900">Have a question?</h5>
                                 <p className="text-slate-500 text-sm mb-6 leading-relaxed font-sans">Interested in implementing these architectural patterns?</p>
                                 <Link href="/contact" className="text-primary text-xs font-black uppercase tracking-widest flex items-center gap-2 hover:gap-4 transition-all">
                                     Connect with us <ArrowRight size={14} />
@@ -181,14 +182,14 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                     {/* Main Content */}
                     <div className="flex-1 max-w-4xl mx-auto lg:mx-0">
                         <div className="mb-16">
-                            <p className="text-2xl md:text-3xl text-slate-600 font-sans italic leading-relaxed border-l-4 border-primary pl-10">
+                            <p className="text-xl md:text-2xl text-slate-600 font-sans italic leading-relaxed border-l-4 border-primary pl-10">
                                 {post.excerpt}
                             </p>
                         </div>
                         
                         <div 
                             id="blog-content"
-                            className="prose prose-slate prose-2xl max-w-none prose-headings:font-black prose-headings:tracking-tighter prose-headings:leading-none prose-p:text-slate-600 prose-p:font-sans prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-[2rem] prose-img:border prose-img:border-slate-100 prose-blockquote:border-primary prose-blockquote:bg-slate-50 prose-blockquote:py-2 prose-blockquote:px-8 prose-blockquote:rounded-2xl"
+                            className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:font-heading prose-headings:tracking-tight prose-headings:text-slate-900 prose-p:text-slate-600 prose-p:font-sans prose-p:leading-relaxed prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-img:rounded-[2rem] prose-img:border prose-img:border-slate-100 prose-blockquote:border-primary prose-blockquote:bg-slate-50 prose-blockquote:py-2 prose-blockquote:px-8 prose-blockquote:rounded-2xl"
                             dangerouslySetInnerHTML={{ __html: post.content }}
                         />
  
@@ -211,7 +212,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                 <section className="py-32 bg-slate-50 border-t border-slate-100">
                     <div className="container mx-auto px-4 max-w-7xl">
                         <div className="flex items-center justify-between mb-16">
-                            <h2 className="text-4xl md:text-5xl font-black tracking-tight text-slate-900">More Perspectives</h2>
+                            <h2 className="text-4xl md:text-5xl font-bold font-heading tracking-tight text-slate-900">More Perspectives</h2>
                             <Link href="/blog" className="text-primary font-black uppercase tracking-widest text-xs flex items-center gap-2 hover:gap-4 transition-all">
                                 View Full Journal <ArrowRight size={16} />
                             </Link>
@@ -220,7 +221,7 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                             {relatedPosts.map((post: any) => (
                                 <Link key={post._id} href={`/blog/${post.slug}`} className="group bg-white p-8 rounded-[3rem] border border-slate-100 hover:border-primary/20 transition-all flex flex-col h-full hover:shadow-xl shadow-slate-200/50">
                                      <span className="text-primary font-black uppercase tracking-widest text-[9px] mb-4 leading-[0.1em]">{post.category}</span>
-                                     <h3 className="text-2xl font-black mb-6 group-hover:text-primary transition-colors line-clamp-2 leading-tight text-slate-900">{post.title}</h3>
+                                     <h3 className="text-2xl font-bold font-heading mb-6 group-hover:text-primary transition-colors line-clamp-2 leading-tight text-slate-900">{post.title}</h3>
                                      <div className="mt-auto flex items-center justify-between pt-6 border-t border-slate-50">
                                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-[0.1em]">{new Date(post.publishDate).toLocaleDateString()}</span>
                                          <ArrowRight className="text-primary w-5 h-5 transition-transform group-hover:translate-x-2" />

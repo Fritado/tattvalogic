@@ -330,18 +330,20 @@ export default function CareersPage() {
                                             <div className="text-slate-600 leading-relaxed text-lg prose prose-slate max-w-none prose-headings:font-black prose-headings:text-slate-900 prose-headings:tracking-tight prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-li:marker:text-primary" dangerouslySetInnerHTML={{ __html: selectedJob.description }} />
                                         </div>
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                                            <div>
-                                                <h4 className="text-xl font-bold mb-4 text-slate-900">Required Skills</h4>
-                                                <div className="flex flex-wrap gap-2">
-                                                    {selectedJob.skills?.map((skill: string, i: number) => (
-                                                        <span key={i} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium text-sm">
-                                                            {skill}
-                                                        </span>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        {selectedJob.skills && selectedJob.skills.length > 0 && (
+                                          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                                              <div>
+                                                  <h4 className="text-xl font-bold mb-4 text-slate-900">Required Skills</h4>
+                                                  <div className="flex flex-wrap gap-2">
+                                                      {selectedJob.skills?.map((skill: string, i: number) => (
+                                                          <span key={i} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium text-sm">
+                                                              {skill}
+                                                          </span>
+                                                      ))}
+                                                  </div>
+                                              </div>
+                                          </div>
+                                        )}
 
                                         {/* Application Footer */}
                                         <div className="pt-8 border-t border-slate-100">

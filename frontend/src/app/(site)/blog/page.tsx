@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import FloatingOrbs from "@/components/shared/FloatingOrbs";
@@ -65,7 +66,7 @@ export default function BlogPage() {
                         className="max-w-4xl mx-auto"
                     >
                         <span className="section-badge-dark mb-8">Engineering & Innovation</span>
-                        <h1 className="text-[2rem] md:text-7xl lg:text-8xl font-black mb-8 tracking-tighter leading-none text-white whitespace-nowrap">
+                        <h1 className="text-4xl md:text-7xl lg:text-7xl font-bold font-heading mb-8 tracking-tight leading-none text-white">
                             The <span className="hero-gradient-text">Engineering</span> Journal
                         </h1>
                         <p className="text-xl md:text-2xl text-white/70 mb-12 max-w-2xl mx-auto font-sans font-medium leading-relaxed">
@@ -115,15 +116,18 @@ export default function BlogPage() {
                         viewport={{ once: true }}
                         className="group relative h-[600px] rounded-[3rem] overflow-hidden border border-slate-100 shadow-2xl"
                     >
-                         <img 
+                         <Image 
                             src={featuredPost.featuredImage || "/placeholder-blog.jpg"} 
                             alt={featuredPost.title}
-                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                            fill
+                            priority
+                            className="object-cover group-hover:scale-105 transition-transform duration-1000"
+                            sizes="(max-width: 1280px) 100vw, 1280px"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#060608]/95 via-[#060608]/60 to-[#060608]/30 sm:via-[#060608]/50 sm:to-[#060608]/20 transition-opacity duration-500" />
                         <Link href={`/blog/${featuredPost.slug}`} className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 max-w-4xl z-10">
                             <span className="text-primary font-black uppercase tracking-[0.3em] text-[10px] mb-4 drop-shadow-md">Featured Insight</span>
-                            <h2 className="text-4xl md:text-6xl font-black text-white mb-6 tracking-tight leading-tight group-hover:text-primary transition-colors drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]">
+                            <h2 className="text-4xl md:text-6xl font-bold font-heading text-white mb-6 tracking-tight leading-tight group-hover:text-primary transition-colors drop-shadow-[0_4px_10px_rgba(0,0,0,0.6)]">
                                 {featuredPost.title}
                             </h2>
                             <p className="text-lg md:text-xl text-white/90 mb-8 font-serif italic max-w-2xl line-clamp-2 drop-shadow-md">
@@ -164,10 +168,12 @@ export default function BlogPage() {
                             >
                                 <Link href={`/blog/${post.slug}`} className="flex flex-col h-full">
                                     <div className="relative h-64 overflow-hidden">
-                                        <img 
+                                        <Image 
                                             src={post.featuredImage || "/placeholder-blog.jpg"} 
                                             alt={post.title}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            fill
+                                            className="object-cover group-hover:scale-110 transition-transform duration-700"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent opacity-80 pointer-events-none" />
                                         <div className="absolute top-4 left-4 z-10">
@@ -177,7 +183,7 @@ export default function BlogPage() {
                                         </div>
                                     </div>
                                     <div className="p-8 flex flex-col flex-1">
-                                        <h3 className="text-2xl font-black mb-4 group-hover:text-primary transition-colors leading-tight line-clamp-2 tracking-tight text-slate-900">
+                                        <h3 className="text-2xl font-bold font-heading mb-4 group-hover:text-primary transition-colors leading-tight line-clamp-2 tracking-tight text-slate-900">
                                             {post.title}
                                         </h3>
                                         <p className="text-slate-500 text-sm font-medium line-clamp-3 mb-8 flex-grow leading-relaxed font-sans italic">

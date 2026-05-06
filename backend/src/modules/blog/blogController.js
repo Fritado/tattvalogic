@@ -1,4 +1,5 @@
 const Blog = require('../../models/Blog');
+const { optimizeImage } = require('../../utils/imageOptimizer');
 
 // @desc    Get all blogs (Public)
 // @route   GET /api/blogs
@@ -79,7 +80,8 @@ exports.createBlog = async (req, res) => {
         
         // Handle featured image upload
         if (req.file) {
-            blogData.featuredImage = `/uploads/${req.file.filename}`;
+            const optimizedFilename = await optimizeImage(req.file);
+            blogData.featuredImage = `/uploads/${optimizedFilename}`;
         }
 
         if (!blogData.slug && blogData.title) {
@@ -110,7 +112,8 @@ exports.updateBlog = async (req, res) => {
 
         // Handle featured image upload
         if (req.file) {
-            blogData.featuredImage = `/uploads/${req.file.filename}`;
+            const optimizedFilename = await optimizeImage(req.file);
+            blogData.featuredImage = `/uploads/${optimizedFilename}`;
         }
 
         if (blogData.title && !blogData.slug) {

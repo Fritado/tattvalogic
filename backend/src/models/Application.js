@@ -36,7 +36,12 @@ const applicationSchema = new mongoose.Schema({
             message: { type: String, required: true },
             date: { type: Date, default: Date.now }
         }
-    ]
+    ],
+    assignedTo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+        default: null
+    }
 }, { timestamps: true });
 
 module.exports = mongoose.model('Application', applicationSchema);

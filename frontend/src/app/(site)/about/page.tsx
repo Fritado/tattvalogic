@@ -1,9 +1,10 @@
 import React from "react";
-import { ArrowRight, Target, Lightbulb, Users, User, CheckCircle2, Linkedin, Zap, Brain, Rocket, MessageSquare } from "lucide-react";
+import { ArrowRight, Target, Lightbulb, Users, Linkedin, Zap, Rocket, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
 import { Metadata } from "next";
 import FloatingOrbs from "@/components/shared/FloatingOrbs";
+import { API_BASE } from "@/config/apiConfig";
 
 export const metadata: Metadata = {
   title: "About Us | Top AI & Digital Innovation Company",
@@ -18,7 +19,23 @@ export const metadata: Metadata = {
   }
 };
 
-export default function AboutPage() {
+// Fetch team data from API
+async function getTeamData() {
+  try {
+    const res = await fetch(`${API_BASE}/team`, { 
+      next: { revalidate: 0 } // Disable cache for immediate updates
+    });
+    if (!res.ok) return [];
+    return await res.json();
+  } catch (error) {
+    console.error("Error fetching team data:", error);
+    return [];
+  }
+}
+
+export default async function AboutPage() {
+    const team = await getTeamData();
+    
     return (
         <div className="flex flex-col min-h-screen">
             {/* Hero Section */}
@@ -171,59 +188,45 @@ export default function AboutPage() {
             </section>
 
             {/* Core Leadership Team */}
-            <section className="section-padding bg-background">
-                <div className="container mx-auto px-4 max-w-6xl text-center">
-                    <span className="section-badge mb-6">The Experts</span>
-                    <h2 className="text-4xl md:text-5xl font-bold mb-6">Meet the Core Team</h2>
-                    <p className="text-xl text-muted-foreground font-sans mb-20 max-w-2xl mx-auto">The pioneers driving engineering and AI excellence at TattvaLogic.</p>
+            {team && team.length > 0 && (
+              <section className="section-padding bg-background">
+                  <div className="container mx-auto px-4 max-w-6xl text-center">
+                      <span className="section-badge mb-6">The Experts</span>
+                      <h2 className="text-4xl md:text-5xl font-bold mb-6">Meet the Core Team</h2>
+                      <p className="text-xl text-muted-foreground font-sans mb-20 max-w-2xl mx-auto">The pioneers driving engineering and AI excellence at TattvaLogic.</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                        {[
-                            {
-                                name: "Banhidipa Mallik",
-                                role: ["Director", "Fritado - Brand Vision & Growth Strategy"],
-                                image: "/Banhidipa-mallik.jpeg",
-                                linkedin: "https://www.linkedin.com/in/banhidipa-mallik-07949a93/"
-                            },
-                            {
-                                name: "Salan Khalkho",
-                                role: ["Director", "Critical Buzzer - AI Transformation & Automation"],
-                                image: "/salan-khalkho.jpeg",
-                                linkedin: "https://www.linkedin.com/in/salankhalkho/"
-                            },
-                            {
-                                name: "Saswati Ray",
-                                role: ["Director", "Tattvalogic - Customer Success"],
-                                image: "/Saswati-ray.jpeg",
-                                linkedin: "https://www.linkedin.com/in/saswati-ray-744447149/"
-                            }
-                        ].map((member, i) => (
-                            <div key={i} className="group flex flex-col items-center">
-                                <div className="relative w-56 h-56 mb-8">
-                                    <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                                    <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-muted/50 group-hover:border-primary transition-all duration-500 shadow-xl">
-                                        <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                                    </div>
-                                </div>
-                                <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
-                                <div className="flex flex-col items-center gap-1 mb-6 text-center">
-                                    <span className="text-primary font-bold tracking-wide uppercase text-xs">{member.role[0]}</span>
-                                    <span className="text-muted-foreground font-semibold text-xs tracking-wide">{member.role[1]}</span>
-                                </div>
-                                <a
-                                    href={member.linkedin}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-primary transition-all gap-2 border border-border rounded-full px-6 py-2 hover:border-primary hover:bg-primary/5 group"
-                                >
-                                    <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                                    View Profile
-                                </a>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                          {team.map((member: any, i: number) => (
+                              <div key={member._id || i} className="group flex flex-col items-center">
+                                  <div className="relative w-56 h-56 mb-8">
+                                      <div className="absolute inset-0 bg-primary/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                                      <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-muted/50 group-hover:border-primary transition-all duration-500 shadow-xl">
+                                          <img src={member.image} alt={member.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                      </div>
+                                  </div>
+                                  <h3 className="text-2xl font-bold mb-2">{member.name}</h3>
+                                  <div className="flex flex-col items-center gap-1 mb-6 text-center">
+                                      <span className="text-primary font-bold tracking-wide uppercase text-xs">{member.designation}</span>
+                                      {member.subRole && <span className="text-muted-foreground font-semibold text-xs tracking-wide">{member.subRole}</span>}
+                                  </div>
+                                  {member.linkedin && (
+                                    <a
+                                        href={member.linkedin}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-primary transition-all gap-2 border border-border rounded-full px-6 py-2 hover:border-primary hover:bg-primary/5 group"
+                                    >
+                                        <Linkedin className="w-4 h-4 text-[#0A66C2]" />
+                                        View Profile
+                                    </a>
+                                  )}
+                              </div>
+                          ))}
+                      </div>
+                  </div>
+              </section>
+            )}
         </div>
     );
 }
+

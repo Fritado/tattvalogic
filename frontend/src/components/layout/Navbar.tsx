@@ -31,9 +31,9 @@ export default function Navbar() {
                         <Image
                             src="/TattvaLogic.png"
                             alt="TattvaLogic Logo"
-                            fill
-                            sizes="(max-width: 768px) 160px, 224px"
-                            className="object-contain object-left"
+                            width={224}
+                            height={64}
+                            className="object-contain object-left w-full h-full"
                             quality={60}
                             priority
                         />

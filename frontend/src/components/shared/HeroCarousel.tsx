@@ -387,7 +387,7 @@ export default function HeroCarousel() {
   return (
     <section className="hc-wrapper" aria-label="TattvaLogic Hero Carousel">
       {/* ──── Slide Background ──── */}
-      <AnimatePresence mode="sync">
+      <AnimatePresence mode="sync" initial={false}>
         <motion.div
           key={`bg-${slide.id}`}
           className="hc-bg-layer"
@@ -425,7 +425,7 @@ export default function HeroCarousel() {
       {/* ──── Content ──── */}
       <div className="hc-content-wrapper">
         <div className="hc-content-inner">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={`content-${slide.id}`}
               className="hc-text-block"
