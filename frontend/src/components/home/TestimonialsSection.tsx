@@ -74,8 +74,7 @@ export default function TestimonialsSection({
                                 const color = t.color || colors[i % colors.length];
                                 const avatar = t.clientName ? t.clientName.split(' ').map((n: string) => n[0]).join('').toUpperCase() : "?";
                                 
-                                const API_BASE = "https://api.tattvalogic.com"; // Fallback or imported
-                                const baseUrl = API_BASE;
+                                const baseUrl = typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "";
                                 const imageUrl = t.clientImage ? (t.clientImage.startsWith('http') ? t.clientImage : `${baseUrl}${t.clientImage}`) : null;
 
                                 return (

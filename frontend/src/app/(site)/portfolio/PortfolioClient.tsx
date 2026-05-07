@@ -115,7 +115,7 @@ export default function PortfolioClient() {
           >
             {currentItems.map((project, idx) => {
               const fallbackLogo = `https://ui-avatars.com/api/?name=${project.title}&background=e2e8f0&color=475569&bold=true`;
-              const baseUrl = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api').replace('/api', '');
+              const baseUrl = typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "";
               const logoUrl = project.thumbnail ? (project.thumbnail.startsWith('http') ? project.thumbnail : `${baseUrl}${project.thumbnail}`) : fallbackLogo;
 
               // Dynamic color scheme based on category

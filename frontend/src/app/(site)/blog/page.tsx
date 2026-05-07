@@ -116,13 +116,10 @@ export default function BlogPage() {
                         viewport={{ once: true }}
                         className="group relative h-[600px] rounded-[3rem] overflow-hidden border border-slate-100 shadow-2xl"
                     >
-                         <Image 
-                            src={featuredPost.featuredImage || "/placeholder-blog.jpg"} 
+                         <img 
+                            src={(featuredPost.featuredImage || "/placeholder-blog.jpg").startsWith('http') ? (featuredPost.featuredImage || "/placeholder-blog.jpg") : (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "") + (featuredPost.featuredImage || "/placeholder-blog.jpg")} 
                             alt={featuredPost.title}
-                            fill
-                            priority
-                            className="object-cover group-hover:scale-105 transition-transform duration-1000"
-                            sizes="(max-width: 1280px) 100vw, 1280px"
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-[#060608]/95 via-[#060608]/60 to-[#060608]/30 sm:via-[#060608]/50 sm:to-[#060608]/20 transition-opacity duration-500" />
                         <Link href={`/blog/${featuredPost.slug}`} className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 max-w-4xl z-10">
@@ -168,12 +165,11 @@ export default function BlogPage() {
                             >
                                 <Link href={`/blog/${post.slug}`} className="flex flex-col h-full">
                                     <div className="relative h-64 overflow-hidden">
-                                        <Image 
-                                            src={post.featuredImage || "/placeholder-blog.jpg"} 
+                                        <img 
+                                            src={(post.featuredImage || "/placeholder-blog.jpg").startsWith('http') ? (post.featuredImage || "/placeholder-blog.jpg") : (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "") + (post.featuredImage || "/placeholder-blog.jpg")} 
                                             alt={post.title}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-700"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                            loading="lazy"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-transparent to-transparent opacity-80 pointer-events-none" />
                                         <div className="absolute top-4 left-4 z-10">

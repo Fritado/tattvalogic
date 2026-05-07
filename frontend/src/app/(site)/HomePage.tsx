@@ -533,12 +533,11 @@ export default function Home() {
                     className={`blog-card-image bg-gradient-to-br ${post.gradient} relative overflow-hidden`}
                   >
                     {post.featuredImage && (
-                      <Image 
-                        src={post.featuredImage}
+                      <img 
+                        src={post.featuredImage.startsWith('http') ? post.featuredImage : (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "") + post.featuredImage}
                         alt={post.title}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 33vw, 400px"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                        loading="lazy"
                       />
                     )}
                     <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />

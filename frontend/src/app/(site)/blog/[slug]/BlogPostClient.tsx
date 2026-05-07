@@ -137,13 +137,10 @@ export default function BlogPostClient({ post, relatedPosts }: any) {
                     transition={{ duration: 1, delay: 0.2 }}
                     className="aspect-[21/9] rounded-[3rem] overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] border border-white/10 bg-slate-100"
                 >
-                    <Image 
-                        src={post.featuredImage || "/placeholder-blog.jpg"} 
+                    <img 
+                        src={(post.featuredImage || "/placeholder-blog.jpg").startsWith('http') ? (post.featuredImage || "/placeholder-blog.jpg") : (typeof window !== 'undefined' ? (process.env.NEXT_PUBLIC_API_URL || "/api").replace(/\/+$/, "").replace('/api', '') : "") + (post.featuredImage || "/placeholder-blog.jpg")} 
                         alt={post.title} 
-                        fill
-                        priority
-                        className="object-cover"
-                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+                        className="absolute inset-0 w-full h-full object-cover"
                     />
                 </motion.div>
             </section>

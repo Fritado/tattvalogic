@@ -305,7 +305,7 @@ function PublicOnboardingPageContent() {
     formData.append('type', type);
 
     try {
-      const res = await fetch(`${API_BASE}/public-onboarding/upload/${token}`, {
+      const res = await fetch(`${API_BASE}/public-onboarding/upload/${token}?empId=${employee?.employeeId || 'general'}`, {
         method: "POST",
         body: formData
       });
