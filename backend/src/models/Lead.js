@@ -14,6 +14,18 @@ const leadSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    address: {
+        type: String,
+        trim: true
+    },
+    city: {
+        type: String,
+        trim: true
+    },
+    country: {
+        type: String,
+        trim: true
+    },
     contacts: [{
         name: { type: String, required: false, trim: true },
         email: { type: String, required: false, trim: true, lowercase: true },

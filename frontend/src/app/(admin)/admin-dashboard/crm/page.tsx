@@ -11,6 +11,7 @@ export default function CRMDashboard() {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [activeFilter, setActiveFilter] = useState<'all' | 'mine' | 'assigned' | 'unassigned'>('all');
   const [sourceFilter, setSourceFilter] = useState<string>('all');
+  const [userFilter, setUserFilter] = useState<string>('all');
   const [leads, setLeads] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [viewMode, setViewMode] = useState<'table' | 'kanban'>('kanban');
@@ -21,8 +22,11 @@ export default function CRMDashboard() {
     companyName: '',
     businessDomain: '',
     contacts: [{ name: '', email: '', mobile: '', designation: '' }],
-    source: 'Website',
+    source: 'Website Enquiry',
     serviceInterest: '',
+    address: '',
+    city: '',
+    country: '',
     dealValue: 0,
     comments: '',
     leadOwner: '',
@@ -35,6 +39,7 @@ export default function CRMDashboard() {
       let url = `${API_BASE}/crm/leads?`;
       if (activeFilter === 'unassigned') url += `assignment=unassigned&`;
       if (sourceFilter !== 'all') url += `source=${encodeURIComponent(sourceFilter)}&`;
+      if (userFilter !== 'all') url += `user=${userFilter}&`;
 
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` }
@@ -63,13 +68,17 @@ export default function CRMDashboard() {
 
   useEffect(() => {
     const storedUser = localStorage.getItem("admin_user");
-    if (storedUser) setCurrentUser(JSON.parse(storedUser));
+    if (storedUser) {
+      const parsed = JSON.parse(storedUser);
+      console.log("Current Admin User Role:", parsed.role);
+      setCurrentUser(parsed);
+    }
     fetchUsers();
   }, []);
 
   useEffect(() => {
     fetchLeads();
-  }, [activeFilter, sourceFilter]);
+  }, [activeFilter, sourceFilter, userFilter]);
 
   const isAdmin = currentUser?.role === 'admin';
   const isMarketingUser = currentUser?.department === 'Marketing & Sales';
@@ -112,7 +121,7 @@ export default function CRMDashboard() {
         setEditingLeadId(null);
         setNewLead({ 
           companyName: '', businessDomain: '', contacts: [{ name: '', email: '', mobile: '', designation: '' }],
-          source: 'Website', serviceInterest: '', dealValue: 0, comments: '', leadOwner: '', assignedTo: '' 
+          source: 'Website Enquiry', serviceInterest: '', address: '', city: '', country: '', dealValue: 0, comments: '', leadOwner: '', assignedTo: '' 
         });
         fetchLeads();
       }
@@ -131,8 +140,11 @@ export default function CRMDashboard() {
       contacts: lead.contacts && lead.contacts.length > 0 
         ? lead.contacts 
         : [{ name: '', email: '', mobile: '', designation: '' }],
-      source: lead.source || 'Website',
+      source: lead.source || 'Website Enquiry',
       serviceInterest: lead.serviceInterest || '',
+      address: lead.address || '',
+      city: lead.city || '',
+      country: lead.country || '',
       dealValue: lead.dealValue || 0,
       comments: lead.comments || '',
       leadOwner: lead.leadOwner?._id || lead.leadOwner || '',
@@ -193,7 +205,7 @@ export default function CRMDashboard() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-8 flex-wrap">
           <h2 className="text-2xl font-bold text-zinc-900">Sales Pipeline</h2>
           
           <div className="flex bg-zinc-100 p-1 rounded-xl">
@@ -239,6 +251,22 @@ export default function CRMDashboard() {
               <option value="LinkedIn">LinkedIn</option>
             </select>
           </div>
+
+          {isAdmin && (
+            <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-xl border border-zinc-200">
+              <span className="text-[10px] font-black uppercase text-zinc-400">User:</span>
+              <select 
+                value={userFilter}
+                onChange={(e) => setUserFilter(e.target.value)}
+                className="text-xs font-bold bg-transparent outline-none border-none cursor-pointer text-zinc-700"
+              >
+                <option value="all">All Users</option>
+                {users.map(u => (
+                  <option key={u._id} value={u._id}>{u.employeeRef?.fullName || u.email.split('@')[0]}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-4">
@@ -261,7 +289,7 @@ export default function CRMDashboard() {
               setEditingLeadId(null);
               setNewLead({ 
                 companyName: '', businessDomain: '', contacts: [{ name: '', email: '', mobile: '', designation: '' }],
-                source: 'Website', serviceInterest: '', dealValue: 0, comments: '', 
+                source: 'Website Enquiry', serviceInterest: '', address: '', city: '', country: '', dealValue: 0, comments: '', 
                 leadOwner: currentUser?._id || '', 
                 assignedTo: currentUser?._id || '' 
               });
@@ -478,6 +506,18 @@ export default function CRMDashboard() {
                     <div>
                       <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Service Interest</label>
                       <input type="text" placeholder="e.g. Web Development" value={newLead.serviceInterest} onChange={e => setNewLead({...newLead, serviceInterest: e.target.value})} className="w-full p-3 border border-zinc-200 rounded-xl outline-none focus:ring-2 focus:ring-primary text-sm bg-white" />
+                    </div>
+                    <div className="col-span-2">
+                      <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Address</label>
+                      <input type="text" placeholder="Full Address" value={newLead.address} onChange={e => setNewLead({...newLead, address: e.target.value})} className="w-full p-3 border border-zinc-200 rounded-xl outline-none focus:ring-2 focus:ring-primary text-sm bg-white" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">City</label>
+                      <input type="text" placeholder="City" value={newLead.city} onChange={e => setNewLead({...newLead, city: e.target.value})} className="w-full p-3 border border-zinc-200 rounded-xl outline-none focus:ring-2 focus:ring-primary text-sm bg-white" />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Country</label>
+                      <input type="text" placeholder="Country" value={newLead.country} onChange={e => setNewLead({...newLead, country: e.target.value})} className="w-full p-3 border border-zinc-200 rounded-xl outline-none focus:ring-2 focus:ring-primary text-sm bg-white" />
                     </div>
                     <div className="col-span-2">
                       <label className="block text-xs font-bold text-zinc-500 uppercase tracking-widest mb-2">Estimated Deal Value (₹)</label>

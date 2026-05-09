@@ -171,6 +171,31 @@ export default function LeadDetail({ params }: { params: Promise<{ id: string }>
               </div>
             </div>
 
+            <div>
+              <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-3">Location</h3>
+              <div className="space-y-2">
+                {lead.address && (
+                  <div className="flex items-start gap-3 text-zinc-600 text-sm">
+                    <div className="w-4 h-4 mt-0.5 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                      <div className="w-1 h-1 bg-zinc-400 rounded-full" />
+                    </div>
+                    <span>{lead.address}</span>
+                  </div>
+                )}
+                {(lead.city || lead.country) && (
+                  <div className="flex items-center gap-3 text-zinc-600 text-sm">
+                    <div className="w-4 h-4 rounded-full bg-zinc-100 flex items-center justify-center shrink-0">
+                      <div className="w-1 h-1 bg-zinc-400 rounded-full" />
+                    </div>
+                    <span>{lead.city}{lead.city && lead.country ? ', ' : ''}{lead.country}</span>
+                  </div>
+                )}
+                {!lead.address && !lead.city && !lead.country && (
+                  <p className="text-xs text-zinc-400 italic">No location info provided</p>
+                )}
+              </div>
+            </div>
+
             {lead.comments && (
               <div>
                 <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-widest mb-2">Initial Comments</h3>

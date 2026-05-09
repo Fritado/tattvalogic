@@ -20,12 +20,16 @@ const getOwnershipFilter = async (user) => {
 // @route   GET /api/crm/leads
 exports.getLeads = async (req, res) => {
     try {
-        const { source, assignment } = req.query;
+        const { source, assignment, user } = req.query;
         let filter = await getOwnershipFilter(req.user);
 
         // Apply additional filters if provided
-        if (source) {
+        if (source && source !== 'all') {
             filter.source = source;
+        }
+
+        if (user && user !== 'all') {
+            filter.assignedTo = user;
         }
 
         if (assignment === 'unassigned') {
