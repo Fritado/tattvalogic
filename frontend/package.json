@@ -46,15 +46,16 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "critters": "^0.0.23",
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "typescript": "^5"
   },
   "browserslist": [
-    "last 2 Chrome versions",
-    "last 2 Safari versions",
-    "last 2 Edge versions",
-    "last 2 Firefox versions",
+    "Chrome >= 94",
+    "Safari >= 15.4",
+    "Edge >= 94",
+    "Firefox >= 91",
     "not dead",
     "not IE 11"
   ]

@@ -34,7 +34,7 @@ export default function Navbar() {
                             width={224}
                             height={64}
                             className="object-contain object-left w-full h-full"
-                            quality={60}
+                            quality={50}
                             priority
                         />
                     </div>

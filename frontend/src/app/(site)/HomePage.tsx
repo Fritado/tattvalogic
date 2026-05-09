@@ -230,10 +230,8 @@ const blogPosts = [
 /*  Main Page Component                           */
 /* ─────────────────────────────────────────────── */
 export default function Home() {
-  const [activeTestimonial, setActiveTestimonial] = useState(0);
   const [latestBlogs, setLatestBlogs] = useState<any[]>(blogPosts);
   const [dynamicTestimonials, setDynamicTestimonials] = useState<any[]>([]);
-  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const fetchLatestBlogs = async () => {
@@ -280,17 +278,6 @@ export default function Home() {
   }, []);
 
   const combinedTestimonials = dynamicTestimonials.length > 0 ? dynamicTestimonials : testimonials;
-
-  useEffect(() => {
-    if (combinedTestimonials.length <= 3 || isPaused) return;
-    const t = setInterval(() => {
-      setActiveTestimonial((p) => (p + 1) % combinedTestimonials.length);
-    }, 4000);
-    return () => clearInterval(t);
-  }, [combinedTestimonials, isPaused]);
-
-  const nextTestimonial = () => setActiveTestimonial((p) => (p + 1) % combinedTestimonials.length);
-  const prevTestimonial = () => setActiveTestimonial((p) => (p - 1 + combinedTestimonials.length) % combinedTestimonials.length);
 
   return (
     <div className="flex flex-col w-full overflow-hidden">
@@ -489,11 +476,6 @@ export default function Home() {
 
       <TestimonialsSection 
         combinedTestimonials={combinedTestimonials}
-        activeTestimonial={activeTestimonial}
-        setActiveTestimonial={setActiveTestimonial}
-        prevTestimonial={prevTestimonial}
-        nextTestimonial={nextTestimonial}
-        setIsPaused={setIsPaused}
         fadeUp={fadeUp}
       />
 

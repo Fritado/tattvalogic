@@ -17,7 +17,7 @@ export default function Footer() {
                                 width={224}
                                 height={64}
                                 className="object-contain object-left w-full h-full"
-                                quality={60}
+                                quality={50}
                             />
                         </div>
                         <p className="text-sm text-gray-300 mt-4 leading-relaxed">

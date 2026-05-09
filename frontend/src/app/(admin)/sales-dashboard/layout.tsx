@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   LayoutDashboard,
   FileText,
@@ -111,11 +112,16 @@ export default function SalesLayout({ children }: { children: React.ReactNode })
       >
         <div className="p-6 flex items-center justify-between border-b border-zinc-100 bg-white sticky top-0 z-10">
           <Link href="/sales-dashboard" className="flex items-center gap-3 overflow-hidden">
-            <img
-              src="/TattvaLogic.png"
-              alt="TattvaLogic Logo"
-              className={`${sidebarOpen ? "h-10" : "h-6"} w-auto transition-all duration-300 object-contain min-w-[32px]`}
-            />
+            <div className={`${sidebarOpen ? "h-10" : "h-6"} relative transition-all duration-300 min-w-[32px]`} style={{ width: sidebarOpen ? '140px' : '32px' }}>
+              <Image
+                src="/TattvaLogic.png"
+                alt="TattvaLogic Logo"
+                fill
+                className="object-contain object-left"
+                quality={50}
+                priority
+              />
+            </div>
           </Link>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-1.5 hover:bg-zinc-100 text-zinc-400 rounded-lg transition-colors">
             {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
