@@ -68,20 +68,15 @@ export default function RootLayout({
         <GoogleAnalytics gaId="G-BZ2Z92FE9R" />
         <Script
           src="https://server.fritado.com/chatpilot.js"
-          data-user-id="25a2d086ff7b43e731b52fd599956d92"
+          data-token="356d4952982bbceba127fa6d4dbf1225"
           strategy="lazyOnload"
         />
-        <Script
-          src="https://server.fritado.com/lead-sdk.js"
-          data-project-key="pk_live_4fcbbdc892647cdd46f606bac5227994"
-          strategy="lazyOnload"
-        />
-        <Script
-          src="https://api.fritado.com/fritado-capture.js"
-          data-key="a7967832b68ec33b46efe6cc29b38291"
-          strategy="lazyOnload"
-        />
+
         {children}
+        <Script 
+          src="https://server.fritado.com/lead-sdk.js" 
+          data-project-key="pk_live_4fcbbdc892647cdd46f606bac5227994"
+        />
       </body>
     </html>
   );
