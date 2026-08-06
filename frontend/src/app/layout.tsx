@@ -68,14 +68,14 @@ export default function RootLayout({
         <GoogleAnalytics gaId="G-BZ2Z92FE9R" />
         <Script
           src="https://server.fritado.com/chatpilot.js"
-          data-token="356d4952982bbceba127fa6d4dbf1225"
+          data-token="3d91f4197059691122072755f3f53bf3"
           strategy="lazyOnload"
         />
 
         {children}
         <Script 
           src="https://server.fritado.com/lead-sdk.js" 
-          data-project-key="pk_live_4fcbbdc892647cdd46f606bac5227994"
+          data-project-key="pk_live_969c80bf9eab4d0197f19fc232c5b59d"
         />
       </body>
     </html>
