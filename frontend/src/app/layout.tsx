@@ -69,7 +69,7 @@ export default function RootLayout({
         <Script
           src="https://server.fritado.com/chatpilot.js"
           data-token="3d91f4197059691122072755f3f53bf3"
-          strategy="lazyOnload"
+          strategy="afterInteractive"
         />
 
         {children}
