@@ -1,7 +1,6 @@
 import { GoogleAnalytics } from '@next/third-parties/google';
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -60,23 +59,24 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <script
+          src="https://server.fritado.com/chatpilot.js"
+          data-token="1452451ac06978210d3116e2f8c9614e"
+          async
+          defer
+        />
       </head>
       <body
         className={`${inter.variable} ${outfit.variable} antialiased`}
         suppressHydrationWarning
       >
         <GoogleAnalytics gaId="G-BZ2Z92FE9R" />
-        <Script
-          src="https://server.fritado.com/chatpilot.js"
-          data-token="1452451ac06978210d3116e2f8c9614e"
-          strategy="afterInteractive"
-        />
 
         {children}
-        <Script 
+
+        <script 
           src="https://server.fritado.com/lead-sdk.js" 
           data-project-key="pk_live_371db2622c29640102473491056f594e"
-          strategy="afterInteractive"
         />
       </body>
     </html>
