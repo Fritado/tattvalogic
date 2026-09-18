@@ -59,11 +59,17 @@ export default function RootLayout({
         <link rel="preconnect" href="https://www.googletagmanager.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* 1. Fritado Website Form Lead Capture SDK */}
+        <script
+          src="https://server.fritado.com/lead-sdk.js"
+          data-project-key="pk_live_7b7d58d8d4f282861a8ea9b0ac21bfe8"
+        />
+
+        {/* 2. Fritado Chatpilot AI Conversational Bot */}
         <script
           src="https://server.fritado.com/chatpilot.js"
-          data-token="1452451ac06978210d3116e2f8c9614e"
+          data-token="012a3d1d11bc4e92e454eb5a638d86b0"
           async
-          defer
         />
       </head>
       <body
@@ -73,11 +79,6 @@ export default function RootLayout({
         <GoogleAnalytics gaId="G-BZ2Z92FE9R" />
 
         {children}
-
-        <script 
-          src="https://server.fritado.com/lead-sdk.js" 
-          data-project-key="pk_live_371db2622c29640102473491056f594e"
-        />
       </body>
     </html>
   );
